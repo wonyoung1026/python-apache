@@ -1,0 +1,4 @@
+MYSQL_URL=localhost
+MYSQL_USER=root
+MYSQL_PASSWORD=1026
+MYSQL_DB=CisoDashboard
