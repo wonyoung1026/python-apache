@@ -41,8 +41,9 @@ def index():
 @app.route('/write',methods=['POST'])
 def write():
     conn = create_mysql_connection()
+    request_json = request.get_json()
     attributes = ATTRIBUTES
-    values = {attributes[index]: request.form[attr] for index, attr in enumerate(attributes)}
+    values = {attributes[index]: request_json.get(attr) for index, attr in enumerate(attributes)}
 
     # Insert computer information into tables
     try:
