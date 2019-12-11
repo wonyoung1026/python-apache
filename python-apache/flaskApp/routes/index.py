@@ -21,11 +21,19 @@ def create_mysql_connection():
 @app.route('/')
 def index():
     conn = create_mysql_connection()
-    sql = "SELECT * FROM {}".format(TABLE_NAME)
-    conn.execute(sql)
-    print([computer for computer in conn.fetchall()])
-    return "test"
-    # return render_template('index.html')
+    computers = list()
+    
+    # Fetch all computers from the table
+    try:
+        with conn.cursor() as cursor:
+            sql = "SELECT * FROM {}".format(TABLE_NAME)
+            cursor.execute(sql)
+            computers = cursor.fetchall()
+        conn.commit()
+    finally:
+        conn.close()
+    
+    return render_template('index.html', computers=computers)
 
 # ------------------------------------------------
 # This POST request to be called from scheduled powershell script
@@ -35,7 +43,8 @@ def write():
     conn = create_mysql_connection()
     attributes = ATTRIBUTES
     values = {attributes[index]: request.form[attr] for index, attr in enumerate(attributes)}
-    
+
+    # Insert computer information into tables
     try:
         with conn.cursor() as cursor:
             sql = """
