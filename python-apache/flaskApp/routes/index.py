@@ -4,7 +4,7 @@ import os
 import pymysql
 
 TABLE_NAME = "Computers"
-
+ATTRIBUTES = ['computer_name', 'os_type', 'os_version', 'build_number']    
 
 def create_mysql_connection():
     return pymysql.connect(host=os.getenv('MYSQL_URL'),
@@ -20,10 +20,10 @@ def create_mysql_connection():
 # ------------------------------------------------
 @app.route('/')
 def index():
-    # conn = create_mysql_connection()
-    # sql = "SELECT * FROM {}".format(TABLE_NAME)
-    # conn.execute(sql)
-    # print([computer for computer in conn.fetchall()])
+    conn = create_mysql_connection()
+    sql = "SELECT * FROM {}".format(TABLE_NAME)
+    conn.execute(sql)
+    print([computer for computer in conn.fetchall()])
     return "test"
     # return render_template('index.html')
 
@@ -33,9 +33,9 @@ def index():
 @app.route('/write',methods=['POST'])
 def write():
     conn = create_mysql_connection()
-    
-    attributes = ['computer_name', 'os_type', 'os_version', 'build_number']    
+    attributes = ATTRIBUTES
     values = {attributes[index]: request.form[attr] for index, attr in enumerate(attributes)}
+    
     try:
         with conn.cursor() as cursor:
             sql = """
